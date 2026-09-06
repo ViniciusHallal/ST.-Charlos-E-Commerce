@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmácia St. Charlos</title>
+    <style>
+        /* ================= Váriaveis e Reset ================= */
+        :root {
+            --st-blue: #0033a0;
+            --st-red: #da291c;
+            --bg-gray: #f5f5f5;
+            --text-dark: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-gray); color: var(--text-dark); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .hidden { display: none !important; }
+
+        /* ================= Header e Navegação ================= */
+        header { background-color: var(--st-blue); color: white; padding: 15px 0; position: sticky; top: 0; z-index: 40; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .nav-content { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; font-weight: bold; cursor: pointer; }
+        .logo span { color: var(--st-red); }
+        .menu-links { display: flex; gap: 20px; align-items: center; }
+        .menu-links span { cursor: pointer; font-size: 14px; transition: 0.2s; font-weight: 500; }
+        .menu-links span:hover { color: #ccc; }
+        .cart-icon { position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-size: 12px; }
+        .cart-badge { position: absolute; top: -10px; right: -10px; background: var(--st-red); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+
+        /* ================= Sidebar do Carrinho ================= */
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; display: flex; justify-content: flex-end; transition: opacity 0.3s; }
+        .cart-sidebar { width: 350px; background: white; height: 100%; padding: 20px; display: flex; flex-direction: column; box-shadow: -2px 0 5px rgba(0,0,0,0.2); }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        .cart-header h2 { color: var(--st-blue); font-size: 20px; }
+        .close-cart { background: none; border: none; font-size: 20px; cursor: pointer; color: #999; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .cart-item-price { color: var(--st-blue); font-weight: bold; }
+        .cart-footer { border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .cart-total span:last-child { color: var(--st-red); }
+        .btn-checkout { width: 100%; background: var(--st-blue); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+
+        /* ================= Layouts Globais (Grids) ================= */
+        .section-title { font-size: 24px; border-left: 4px solid var(--st-blue); padding-left: 10px; margin-bottom: 20px; color: var(--st-blue); }
+        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; border: 1px solid #eaeaea; }
+        .card-tag { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+        .card-title { font-size: 16px; margin-bottom: 10px; flex: 1; }
+        .card-price { font-size: 20px; color: var(--st-blue); font-weight: bold; margin-bottom: 15px; }
+        .btn-add { background: var(--st-blue); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .btn-add:hover { background: #002277; }
+
+        /* ================= Estilos Específicos das Páginas ================= */
+        .banner { background: var(--st-red); color: white; padding: 30px; text-align: center; border-radius: 8px; margin-bottom: 30px; }
+        
+        .pedido-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .badge-status { background: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+
+        .login-box { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 14px; margin-bottom: 5px; }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-login { width: 100%; background: var(--st-blue); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Principal -->
+    <header>
+        <div class="nav-content">
+            <div class="logo" onclick="navigate('home')">ST. CHARLOS <span>+</span></div>
+            <div class="menu-links">
+                <span onclick="navigate('produtos')">Produtos</span>
+                <span onclick="navigate('pedidos')">Meus Pedidos</span>
+                <span onclick="navigate('login')">Entrar / Cadastrar</span>
+                <div class="cart-icon" onclick="toggleCart(true)">
+                    <div class="cart-badge" id="cart-count">0</div>
+                    🛒
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar do Carrinho -->
+    <div id="cart-sidebar" class="cart-overlay hidden">
+        <div class="cart-sidebar">
+            <div class="cart-header">
+                <h2>Seu Carrinho</h2>
+                <button class="close-cart" onclick="toggleCart(false)">✖</button>
+            </div>
+            <div class="cart-items" id="cart-items-container">
+                <p style="color:#999; text-align:center; margin-top: 20px;">O carrinho está vazio.</p>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cart-total-price">R$ 0,00</span>
+                </div>
+                <button class="btn-checkout">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container Principal (Onde as páginas vão aparecer) -->
+    <main class="container">
+
+        <!-- ================= PÁGINA: HOME ================= -->
+        <section id="page-home">
+            <div class="banner">
+                <h2>Bem-vindo à St. Charlos</h2>
+                <p>Ofertas exclusivas para cuidar da sua saúde e beleza.</p>
+            </div>
+            <h2 class="section-title">Recomendações em Destaque</h2>
+            <div class="grid-produtos">
+                <div class="card">
+                    <div class="card-tag">Medicamento</div>
+                    <h3 class="card-title">Vitamina C 1g</h3>
+                    <div class="card-price">R$ 15,90</div>
+                    <button class="btn-add" onclick="addToCart('Vitamina C 1g', 15.90)">Comprar</button>
+                </div>
+                <div class="card">
+                    <div class="card-tag">Cosmético</div>
+                    <h3 class="card-title">Sérum Anti-idade</h3>
+                    <div class="card-price">R$ 120,00</div>
+                    <button class="btn-add" onclick="addToCart('Sérum Anti-idade', 120.00)">Comprar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PÁGINA: TODOS OS PRODUTOS ================= -->
+        <section id="page-produtos" class="hidden">
+            <h2 class="section-title" style="border-left-color: var(--st-red);">💊 Medicamentos</h2>
+            <div class="grid-produtos">
+                <div class="card">
+                    <h3 class="card-title">Dipirona Sódica 500mg</h3>
+                    <div class="card-price">R$ 8,50</div>
+                    <button class="btn-add" onclick="addToCart('Dipirona Sódica 500mg', 8.50)">Adicionar</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Amoxicilina 500mg (Requer Receita)</h3>
+                    <div class="card-price">R$ 45,00</div>
+                    <button class="btn-add" onclick="addToCart('Amoxicilina 500mg', 45.00)">Adicionar</button>
+                </div>
+            </div>
+
+            <h2 class="section-title" style="border-left-color: purple;">✨ Cosméticos</h2>
+            <div class="grid-produtos">
+                <div class="card">
+                    <h3 class="card-title">Protetor Solar FPS 70</h3>
+                    <div class="card-price">R$ 89,90</div>
+                    <button class="btn-add" onclick="addToCart('Protetor Solar FPS 70', 89.90)">Adicionar</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Hidratante Corporal 400ml</h3>
+                    <div class="card-price">R$ 35,90</div>
+                    <button class="btn-add" onclick="addToCart('Hidratante Corporal 400ml', 35.90)">Adicionar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PÁGINA: MEUS PEDIDOS ================= -->
+        <section id="page-pedidos" class="hidden">
+            <h2 class="section-title">Meus Pedidos</h2>
+            <div class="pedido-card">
+                <div>
+                    <h3 style="color: var(--st-blue); margin-bottom: 5px;">Pedido #00124</h3>
+                    <p style="font-size: 14px; color: #666;">Data: 06/09/2026</p>
+                    <p style="font-weight: bold; margin-top: 10px;">Total: R$ 45,90</p>
+                </div>
+                <div>
+                    <span class="badge-status">Aguardando Pagamento</span>
+                </div>
+            </div>
+            <div class="pedido-card">
+                <div>
+                    <h3 style="color: var(--st-blue); margin-bottom: 5px;">Pedido #00098</h3>
+                    <p style="font-size: 14px; color: #666;">Data: 15/08/2026</p>
+                    <p style="font-weight: bold; margin-top: 10px;">Total: R$ 135,00</p>
+                </div>
+                <div>
+                    <span class="badge-status" style="background: #d4edda; color: #155724;">Entregue</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PÁGINA: LOGIN ================= -->
+        <section id="page-login" class="hidden">
+            <div class="login-box">
+                <h2 style="text-align: center; color: var(--st-blue); margin-bottom: 20px;">Acesso Restrito</h2>
+                <form onsubmit="event.preventDefault(); navigate('home'); alert('Login simulado com sucesso!');">
+                    <div class="input-group">
+                        <label>E-mail ou CPF</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" required>
+                    </div>
+                    <button type="submit" class="btn-login">Entrar</button>
+                    <p style="text-align: center; margin-top: 15px; font-size: 14px;">
+                        Ainda não tem conta? <a href="#" style="color: var(--st-red); font-weight: bold;">Cadastre-se</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Sistema de Navegação (Esconder/Mostrar seções)
+        const pages = ['page-home', 'page-produtos', 'page-pedidos', 'page-login'];
+        
+        function navigate(targetId) {
+            pages.forEach(page => {
+                document.getElementById(page).classList.add('hidden');
+            });
+            document.getElementById('page-' + targetId).classList.remove('hidden');
+            window.scrollTo(0, 0); // Volta pro topo da página
+        }
+
+        // Sistema do Carrinho de Compras
+        let cart = [];
+
+        function toggleCart(show) {
+            const sidebar = document.getElementById('cart-sidebar');
+            if(show) sidebar.classList.remove('hidden');
+            else sidebar.classList.add('hidden');
+        }
+
+        function addToCart(nome, preco) {
+            cart.push({ nome, preco });
+            updateCartUI();
+            toggleCart(true); // Abre o carrinho automaticamente ao adicionar
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const countLabel = document.getElementById('cart-count');
+            const priceLabel = document.getElementById('cart-total-price');
+            
+            // Atualiza a bolinha vermelha
+            countLabel.innerText = cart.length;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color:#999; text-align:center; margin-top: 20px;">O carrinho está vazio.</p>';
+                priceLabel.innerText = 'R$ 0,00';
+                return;
+            }
+
+            // Renderiza os itens
+            container.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                total += item.preco;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.nome}</span>
+                        <span class="cart-item-price">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+            });
+
+            priceLabel.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+    </script>
+</body>
+</html>
